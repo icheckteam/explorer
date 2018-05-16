@@ -7,6 +7,14 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
+var txInfo struct {
+	Hash string
+	Height int64
+	Tx sdk.Tx
+	Time time.Time
+	Index uint64
+}
+
 // insertBlock....
 func (s *Store) insertBlock(block *ttypes.Block) error {
 	var err error
@@ -32,12 +40,19 @@ func (s *Store) insertBlock(block *ttypes.Block) error {
 	}
 
 	// insert txs 
-	for i, txBytes := block.Data.Txs {
+	for i, tx := block.Data.Txs {
 		txn, err:= parseTx(s.cdc, txBytes)
 		if err != nil {
 			return err
 		}
-		if err = s.insertTxn(txn, b.Height, i, b.Time); err != nil {
+		info := txInfo{
+			Hash: tx.Hash().String(),
+			Height: b.Height,
+			Time: b.Time,
+			Tx: txn,
+			Index: i,
+		}
+		if err = s.insertTxn(info); err != nil {
 			return err
 		}
 	}
@@ -62,3 +77,8 @@ func parseTx(cdc *wire.Codec, txBytes []byte) (sdk.Tx, error) {
 	}
 	return tx, nil
 }
+
+
+
+
+
