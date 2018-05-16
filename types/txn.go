@@ -1,6 +1,10 @@
 package types
 
-import "time"
+import (
+	"time"
+
+	sdk "github.com/cosmos/cosmos-sdk/types"
+)
 
 type Transaction struct {
 	Hash   string
@@ -9,4 +13,11 @@ type Transaction struct {
 	Type   string
 	Time   time.Time
 	Fee    int64
+}
+
+type Txinfo struct {
+	Height int64
+	Tx     sdk.StdTx
+	Hash   string
+	Time   time.Time
 }
