@@ -1,7 +1,12 @@
 package store
 
 import (
+	"errors"
+	"fmt"
+	"reflect"
+
 	"github.com/icheckteam/explorer/types"
+	"github.com/icheckteam/ichain/x/asset"
 	ttypes "github.com/tendermint/tendermint/types"
 	mgo "gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
@@ -55,4 +60,20 @@ func (s *Store) UpdateNextBlockHash(hash string, height int64) error {
 	return s.blockC.Update(bson.M{
 		"height": height,
 	}, bson.M{"$set": bson.M{"next_block": hash}})
+}
+
+func (s *Store) InsertTxn(info types.TxInfo) error {
+	msg := info.Tx.GetMsg()
+
+	switch msg := msg.(type) {
+	case asset.RegisterMsg:
+		return s.insertRegisterAssetTxn(msg, info)
+	default:
+		errMsg := fmt.Sprintf("Unrecognized trace Msg type: %v", reflect.TypeOf(msg).Name())
+		return errors.New(errMsg)
+	}
+}
+
+func (s *Store) insertRegisterAssetTxn(msg asset.RegisterMsg, info types.TxInfo) error {
+	return nil
 }

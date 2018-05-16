@@ -15,9 +15,10 @@ type Transaction struct {
 	Fee    int64
 }
 
-type Txinfo struct {
+type TxInfo struct {
 	Height int64
-	Tx     sdk.StdTx
+	Tx     sdk.Tx
 	Hash   string
 	Time   time.Time
+	Index  int64
 }

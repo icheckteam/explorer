@@ -7,14 +7,15 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/context"
+	csdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/wire"
 	"github.com/icheckteam/explorer/sdk"
 	"github.com/icheckteam/explorer/store"
+	"github.com/icheckteam/explorer/types"
 	"github.com/icheckteam/ichain/app"
 	"github.com/spf13/cobra"
-	mgo "gopkg.in/mgo.v2"
-
 	"github.com/tendermint/tmlibs/cli"
+	mgo "gopkg.in/mgo.v2"
 )
 
 // rootCmd is the entry point for this binary
@@ -62,6 +63,7 @@ func GetStartCmd(cdc *wire.Codec, s *store.Store) *cobra.Command {
 			currentHeight, _ := s.GetCurrentHeight()
 			currentHeight += 1
 			for {
+				log.Printf("block height: %d", currentHeight)
 				ichainSdk := sdk.NewIchainSdk(context.NewCoreContextFromViper())
 				res, err := ichainSdk.GetBlock(currentHeight)
 				if err != nil {
@@ -77,10 +79,36 @@ func GetStartCmd(cdc *wire.Codec, s *store.Store) *cobra.Command {
 					s.UpdateNextBlockHash(res.Block.Hash().String(), res.Block.Height-1)
 				}
 
-				log.Printf("run %d", res.Block.Header.Height)
+				if res.Block.NumTxs > 0 {
+					for i, tx := range res.Block.Data.Txs {
+						ptx, err := parseTx(cdc, tx)
+						if err != nil {
+							panic(err)
+						}
+						txInfo := types.TxInfo{
+							Hash:   tx.String(),
+							Time:   res.Block.Time,
+							Height: res.Block.Height,
+							Tx:     ptx,
+							Index:  int64(i),
+						}
+
+						s.InsertTxn(txInfo)
+					}
+				}
+
 				currentHeight++
 
 			}
 		},
 	}
+}
+
+func parseTx(cdc *wire.Codec, txBytes []byte) (csdk.Tx, error) {
+	var tx csdk.StdTx
+	err := cdc.UnmarshalBinary(txBytes, &tx)
+	if err != nil {
+		return nil, err
+	}
+	return tx, nil
 }
