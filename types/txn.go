@@ -15,6 +15,22 @@ type Transaction struct {
 	Fee    int64
 }
 
+type TransactionInput struct {
+	TxHash    string
+	Address   string
+	AssetID   string
+	AssetName string
+	Amount    int64
+}
+
+type TransactionOutput struct {
+	TxHash    string
+	Address   string
+	AssetID   string
+	AssetName string
+	Amount    int64
+}
+
 type TxInfo struct {
 	Height int64
 	Tx     sdk.Tx

@@ -7,6 +7,7 @@ import (
 
 	"github.com/icheckteam/explorer/types"
 	"github.com/icheckteam/ichain/x/asset"
+	"github.com/icheckteam/ichain/x/bank"
 	ttypes "github.com/tendermint/tendermint/types"
 	mgo "gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
@@ -14,17 +15,21 @@ import (
 
 // Service ...
 type Store struct {
-	blockC *mgo.Collection
-	txnC   *mgo.Collection
-	assetC *mgo.Collection
+	blockC     *mgo.Collection
+	txnC       *mgo.Collection
+	assetC     *mgo.Collection
+	txnInputC  *mgo.Collection
+	txnOutputC *mgo.Collection
 }
 
 // NewStore ...
 func NewStore(db *mgo.Database) *Store {
 	return &Store{
-		blockC: db.C("blocks"),
-		txnC:   db.C("transactions"),
-		assetC: db.C("assets"),
+		blockC:     db.C("blocks"),
+		assetC:     db.C("assets"),
+		txnC:       db.C("transactions"),
+		txnInputC:  db.C("transaction_inputs"),
+		txnOutputC: db.C("transaction_output"),
 	}
 }
 
@@ -68,10 +73,59 @@ func (s *Store) InsertTxn(info types.TxInfo) error {
 	switch msg := msg.(type) {
 	case asset.RegisterMsg:
 		return s.insertRegisterAssetTxn(msg, info)
+	case bank.MsgSend:
+		return s.insertSendTx(msg, info)
 	default:
 		errMsg := fmt.Sprintf("Unrecognized trace Msg type: %v", reflect.TypeOf(msg).Name())
 		return errors.New(errMsg)
 	}
+}
+
+func (s *Store) GetAsset(id string) (*types.Asset, error) {
+	asset := &types.Asset{}
+	err := s.assetC.Find(bson.M{"id": id}).One(asset)
+	return asset, err
+}
+
+func (s *Store) insertSendTx(msg bank.MsgSend, info types.TxInfo) error {
+	var err error
+	inputs := []types.TransactionInput{}
+	assets := map[string]*types.Asset{}
+	for _, in := range msg.Inputs {
+		for _, coin := range in.Coins {
+			assets[coin.Denom], err = s.GetAsset(coin.Denom)
+			if err != nil {
+				return err
+			}
+			inputs = append(inputs, types.TransactionInput{
+				Address:   in.Address.String(),
+				Amount:    coin.Amount,
+				AssetID:   coin.Denom,
+				AssetName: "",
+				TxHash:    info.Hash,
+			})
+		}
+	}
+	outputs := []types.TransactionOutput{}
+	for _, in := range msg.Inputs {
+		for _, coin := range in.Coins {
+			outputs = append(outputs, types.TransactionOutput{
+				Address:   in.Address.String(),
+				Amount:    coin.Amount,
+				AssetID:   coin.Denom,
+				AssetName: "",
+				TxHash:    info.Hash,
+			})
+		}
+	}
+
+	if err = s.txnInputC.Insert(inputs); err != nil {
+		return err
+	}
+	if err = s.txnOutputC.Insert(outputs); err != nil {
+		return err
+	}
+	return s.insertTxBasicInfo("bank/send", info)
 }
 
 func (s *Store) insertRegisterAssetTxn(msg asset.RegisterMsg, info types.TxInfo) error {
