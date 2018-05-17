@@ -13,6 +13,7 @@ type Transaction struct {
 	Type   string    `json:"type" bson:"type"`
 	Time   time.Time `json:"time" bson:"time"`
 	Fee    int64     `json:"fee" bson:"fee"`
+	Tags   []string  `json:"tags" bson:"tags"`
 }
 
 type TransactionInput struct {
@@ -37,4 +38,13 @@ type TxInfo struct {
 	Hash   string
 	Time   time.Time
 	Index  int64
+}
+
+type Transfer struct {
+	TxHash    string `json:"tx_hash" bson:"tx_hash"`
+	From      string `json:"from" bson:"from"`
+	To        string `json:"to" bson:"to"`
+	AssetID   string `json:"asset_id" bson:"asset_id"`
+	AssetName string `json:"asset_name" bson:"asset_name"`
+	Amount    int64  `json:"amount" bson:"amount"`
 }
