@@ -25,8 +25,12 @@ func (a *API) RegisterRoutes(mux *mux.Router) {
 	mux.HandleFunc("/txs/{hash}", a.handleGetTxnHash)
 	mux.HandleFunc("/txs", a.handleGetTxs)
 
-	// Txns
-	mux.HandleFunc("/assets/{id}", a.handleGetAsset)
+	// Assets
 	mux.HandleFunc("/assets", a.handleGetAssets)
-
+	mux.HandleFunc("/assets/{id}", a.handleGetAsset)
+	mux.HandleFunc("/assets/{id}/accounts", a.handleGetAssetAccounts)
+	mux.HandleFunc("/assets/{id}/trasfers", a.handleGetAssetTransfers)
+	mux.HandleFunc("/assets/{id}/txs", a.handleGetAssetTxs)
+	mux.HandleFunc("/assets/{id}/issues", a.handleGetAssetIssues)
+	mux.HandleFunc("/assets/{id}/history", a.handleGetAssetHistory)
 }

@@ -31,3 +31,59 @@ func (s *API) handleGetAsset(w http.ResponseWriter, r *http.Request) {
 	}
 	WriteJSON(w, http.StatusOK, b)
 }
+
+// handleGetTxs ...
+func (s *API) handleGetAssetAccounts(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	limit, skip, err := getLimitSkip(r)
+	if err != nil {
+		WriteErrorJSON(w, err)
+		return
+	}
+	b, err := s.store.GetAssetAccounts(vars["id"], limit, skip)
+	if err != nil {
+		WriteErrorJSON(w, err)
+		return
+	}
+	WriteJSON(w, http.StatusOK, b)
+}
+
+// handleGetTxs ...
+func (s *API) handleGetAssetTxs(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	limit, skip, err := getLimitSkip(r)
+	if err != nil {
+		WriteErrorJSON(w, err)
+		return
+	}
+	b, err := s.store.GetAssetTxs(vars["id"], limit, skip)
+	if err != nil {
+		WriteErrorJSON(w, err)
+		return
+	}
+	WriteJSON(w, http.StatusOK, b)
+}
+
+// handleGetTxs ...
+func (s *API) handleGetAssetTransfers(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	limit, skip, err := getLimitSkip(r)
+	if err != nil {
+		WriteErrorJSON(w, err)
+		return
+	}
+	b, err := s.store.GetAssetTransfers(vars["id"], limit, skip)
+	if err != nil {
+		WriteErrorJSON(w, err)
+		return
+	}
+	WriteJSON(w, http.StatusOK, b)
+}
+
+// handleGetTxs ...
+func (s *API) handleGetAssetIssues(w http.ResponseWriter, r *http.Request) {
+}
+
+// handleGetTxs ...
+func (s *API) handleGetAssetHistory(w http.ResponseWriter, r *http.Request) {
+}
