@@ -71,8 +71,8 @@ func main() {
 
 func GetStartCmd(cdc *wire.Codec, s *store.Store) *cobra.Command {
 	return &cobra.Command{
-		Use:   "start",
-		Short: "start",
+		Use:   "start-indexer",
+		Short: "start-indexer",
 		Run: func(cmd *cobra.Command, args []string) {
 			currentHeight, _ := s.GetCurrentHeight()
 			currentHeight += 1
