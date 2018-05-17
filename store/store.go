@@ -75,5 +75,31 @@ func (s *Store) InsertTxn(info types.TxInfo) error {
 }
 
 func (s *Store) insertRegisterAssetTxn(msg asset.RegisterMsg, info types.TxInfo) error {
-	return nil
+	asset := &types.Asset{
+		ID:         msg.ID,
+		Name:       msg.Name,
+		Quantity:   msg.Quantity,
+		Issuer:     msg.Issuer.String(),
+		Email:      msg.Email,
+		Company:    msg.Company,
+		TxHash:     info.Hash,
+		CreateTime: info.Time,
+	}
+	if err := s.assetC.Insert(asset); err != nil {
+		return err
+	}
+	// insert tx basic info
+	return s.insertTxBasicInfo("asset/register", info)
+}
+
+func (s *Store) insertTxBasicInfo(txtype string, info types.TxInfo) error {
+	tx := types.Transaction{
+		Hash:   info.Hash,
+		Height: info.Height,
+		Fee:    0,
+		Index:  info.Index,
+		Time:   info.Time,
+		Type:   txtype,
+	}
+	return s.txnC.Insert(&tx)
 }
