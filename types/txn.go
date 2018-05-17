@@ -7,28 +7,28 @@ import (
 )
 
 type Transaction struct {
-	Hash   string
-	Height int64
-	Index  int64
-	Type   string
-	Time   time.Time
-	Fee    int64
+	Hash   string    `json:"hash" bson:"hash"`
+	Height int64     `json:"height" bson:"height"`
+	Index  int64     `json:"index" bson:"index"`
+	Type   string    `json:"type" bson:"type"`
+	Time   time.Time `json:"time" bson:"time"`
+	Fee    int64     `json:"fee" bson:"fee"`
 }
 
 type TransactionInput struct {
-	TxHash    string
-	Address   string
-	AssetID   string
-	AssetName string
-	Amount    int64
+	TxHash    string `json:"tx_hash" bson:"tx_hash"`
+	Address   string `json:"address" bson:"address"`
+	AssetID   string `json:"asset_id" bson:"asset_id"`
+	AssetName string `json:"asset_name" bson:"asset_name"`
+	Amount    int64  `json:"amount" bson:"amount"`
 }
 
 type TransactionOutput struct {
-	TxHash    string
-	Address   string
-	AssetID   string
-	AssetName string
-	Amount    int64
+	TxHash    string `json:"tx_hash" bson:"tx_hash"`
+	Address   string `json:"address" bson:"address"`
+	AssetID   string `json:"asset_id" bson:"asset_id"`
+	AssetName string `json:"asset_name" bson:"asset_name"`
+	Amount    int64  `json:"amount" bson:"amount"`
 }
 
 type TxInfo struct {
