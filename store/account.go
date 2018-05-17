@@ -21,9 +21,9 @@ func (s *Store) addCoin(addr, assetID string, amount int64) error {
 	return err
 }
 
-func (s *Store) GetAccountAssets(addr string) ([]types.AccountAsset, error) {
+func (s *Store) GetAccountAssets(addr string, limit, skip int) ([]types.AccountAsset, error) {
 	assets := []types.AccountAsset{}
-	err := s.accountAssetC.Find(bson.M{"address": addr}).All(assets)
+	err := s.accountAssetC.Find(bson.M{"address": addr}).Skip(skip).Limit(limit).All(assets)
 	return assets, err
 }
 

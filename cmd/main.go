@@ -164,5 +164,8 @@ func createHandler(s *store.Store) http.Handler {
 	r := mux.NewRouter()
 	a := core.NewAPI(s)
 	a.RegisterRoutes(r)
-	return r
+	return core.Handler{
+		APIHandler:  r,
+		FileHandler: core.NewFileHandler("./dashboard/build"),
+	}
 }
