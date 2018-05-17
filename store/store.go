@@ -12,6 +12,8 @@ type Store struct {
 	txnInputC     *mgo.Collection
 	txnOutputC    *mgo.Collection
 	accountAssetC *mgo.Collection
+	assetIssueC   *mgo.Collection
+	assetSubtracC *mgo.Collection
 }
 
 // NewStore ...
@@ -22,6 +24,8 @@ func NewStore(db *mgo.Database) *Store {
 		txnC:          db.C("transactions"),
 		txnInputC:     db.C("transaction_inputs"),
 		txnOutputC:    db.C("transaction_output"),
-		accountAssetC: db.C("account_asset"),
+		accountAssetC: db.C("account_assets"),
+		assetIssueC:   db.C("asset_issues"),
+		assetSubtracC: db.C("asset_subtract"),
 	}
 }

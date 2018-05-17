@@ -20,6 +20,10 @@ func (s *Store) InsertTxn(info types.TxInfo) error {
 		return s.insertRegisterAssetTxn(msg, info)
 	case bank.MsgSend:
 		return s.insertSendTx(msg, info)
+	case asset.AddQuantityMsg:
+		return s.insertIssueAssetTxn(msg, info)
+	case asset.SubtractQuantityMsg:
+		return s.insertAssetSubtractTxn(msg, info)
 	default:
 		errMsg := fmt.Sprintf("Unrecognized trace Msg type: %v", reflect.TypeOf(msg).Name())
 		return errors.New(errMsg)
@@ -117,6 +121,34 @@ func (s *Store) insertTxBasicInfo(txtype string, tags []string, info types.TxInf
 		Tags:   tags,
 	}
 	return s.txnC.Insert(&tx)
+}
+
+func (s *Store) insertIssueAssetTxn(msg asset.AddQuantityMsg, info types.TxInfo) error {
+	issue := types.AssetIssue{
+		Amount:     msg.Quantity,
+		AssetID:    msg.ID,
+		Issuer:     msg.Issuer.String(),
+		CreateTime: info.Time,
+	}
+	// add coin ...issue
+	if err := s.addCoin(issue.Issuer, issue.AssetID, issue.Amount); err != nil {
+		return err
+	}
+	return s.assetIssueC.Insert(issue)
+}
+
+func (s *Store) insertAssetSubtractTxn(msg asset.SubtractQuantityMsg, info types.TxInfo) error {
+	issue := types.AssetSubtract{
+		Amount:     msg.Quantity,
+		AssetID:    msg.ID,
+		Issuer:     msg.Issuer.String(),
+		CreateTime: info.Time,
+	}
+	// add coin ...issue
+	if err := s.addCoin(issue.Issuer, issue.AssetID, issue.Amount); err != nil {
+		return err
+	}
+	return s.assetSubtracC.Insert(issue)
 }
 
 // GetCurrentHeight ....

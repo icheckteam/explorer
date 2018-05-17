@@ -20,3 +20,17 @@ type AssetTransaction struct {
 	Transaction
 	AssetID string
 }
+
+type AssetIssue struct {
+	AssetID    string
+	Amount     int64
+	Issuer     string
+	CreateTime time.Time
+}
+
+type AssetSubtract struct {
+	AssetID    string
+	Amount     int64
+	Issuer     string
+	CreateTime time.Time
+}
