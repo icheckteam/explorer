@@ -1,6 +1,6 @@
 import React from 'react'
 import { Route, BrowserRouter as Router } from "react-router-dom";
-
+import MenuDrawer from './components/MenuDrawer'
 
 import { ROUTES  } from './common/constants'
 
@@ -15,13 +15,13 @@ import TransactionsContainer from './containers/TransactionsContainer'
 export const Routes = (props) => {
   return(
     <Router>
-      <div>
+      <MenuDrawer>
         <Route path={ROUTES.HOME} exact component={HomeContainer} />
         <Route path={ROUTES.TXS} exact component={TransactionsContainer} />
         <Route path={ROUTES.ADDRESSES} exact component={AddressesContainer} />
         <Route path={ROUTES.ASSETS} exact component={AssetsContainer} />
         <Route path={ROUTES.BLOCKS} exact component={BlocksContainer} />
-      </div>
+      </MenuDrawer>
     </Router>
   )
 }
