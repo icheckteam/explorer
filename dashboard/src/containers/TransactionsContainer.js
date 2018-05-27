@@ -1,17 +1,23 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-
+import Transactions from './components/Transactions';
+import { getAllTransactions } from '../actions/transaction'
 function mapStateToProps(state) {
   return {
-
+    transactions: state.transactions.transactions,
   };
 }
 
 class TransactionsContainer extends Component {
+  componentDidMount() {
+    this.props.getAllTransactions()
+  }
   render() {
     return (
       <div>
-        TransactionsContainer
+        <Transactions
+          transactions={this.props.transactions}
+          />
       </div>
     );
   }
@@ -19,4 +25,5 @@ class TransactionsContainer extends Component {
 
 export default connect(
   mapStateToProps,
+  { getAllTransactions }
 )(TransactionsContainer);
