@@ -17,7 +17,7 @@ services:
        - MONGO_URI=mongodb://mongo:27017/ichain
     command: rest-server
     
-  explorer:
+  indexer:
     image: ichain
     restart: always
     ports:
