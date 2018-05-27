@@ -28,3 +28,4 @@ _cgo_export.*
 /vendor
 /.idea
 build
+node_modules
