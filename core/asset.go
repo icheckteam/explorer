@@ -86,4 +86,11 @@ func (s *API) handleGetAssetIssues(w http.ResponseWriter, r *http.Request) {
 
 // handleGetTxs ...
 func (s *API) handleGetAssetHistory(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	b, err := s.store.GetAssetHistory(vars["id"], vars["name"])
+	if err != nil {
+		WriteErrorJSON(w, err)
+		return
+	}
+	WriteJSON(w, http.StatusOK, b)
 }

@@ -2,6 +2,7 @@ package store
 
 import (
 	"github.com/icheckteam/explorer/types"
+	"github.com/icheckteam/ichain/x/asset"
 	"gopkg.in/mgo.v2/bson"
 )
 
@@ -59,4 +60,36 @@ func (s *Store) GetAssetTransfers(assetID string, limit, skip int) ([]types.Tran
 		})
 	}
 	return transfers, nil
+}
+
+func (s *Store) insertPropertipes(msg asset.UpdateAttrMsg, info types.TxInfo) error {
+	propertipes := []*types.Property{}
+	for _, property := range msg.Attributes {
+		p := &types.Property{
+			AssetID:     msg.ID,
+			Height:      info.Height,
+			Reporter:    msg.Issuer.String(),
+			CreateTime:  info.Time,
+			Name:        property.Name,
+			Type:        property.Type,
+			StringValue: property.StringValue,
+			BytesValue:  property.BytesValue,
+			EnumValue:   property.EnumValue,
+			Location: types.Location{
+				Latitude:  property.Location.Latitude,
+				Longitude: property.Location.Longitude,
+			},
+			NumberValue:  property.NumberValue,
+			BooleanValue: property.BooleanValue,
+		}
+
+		propertipes = append(propertipes, p)
+	}
+	return s.propertyC.Insert(propertipes)
+}
+
+func (s *Store) GetAssetHistory(assetID string, name string) ([]types.Property, error) {
+	propertipes := []types.Property{}
+	err := s.propertyC.Find(bson.M{"asset_id": assetID, "name": name}).All(&propertipes)
+	return propertipes, err
 }

@@ -16,21 +16,23 @@ type Asset struct {
 	NumTxs      int64     `json:"num_txs" bson:"num_txs"`
 }
 
-type AssetTransaction struct {
-	Transaction
-	AssetID string
+// Property ...
+type Property struct {
+	AssetID      string    `json:"asset_id" bson:"asset_id"`
+	Height       int64     `json:"height" bson:"height"`
+	Reporter     string    `json:"reporter" bson:"reporter"`
+	Name         string    `json:"name" bson:"name"`
+	Type         int       `json:"type" bson:"type"`
+	BytesValue   []byte    `json:"bytes_value" bson:"bytes_value"`
+	StringValue  string    `json:"string_value" bson:"string_value"`
+	BooleanValue bool      `json:"boolean_value" bson:"boolean_value"`
+	NumberValue  int64     `json:"number_value" bson:"number_value"`
+	EnumValue    []string  `json:"enum_value" bson:"enum_value"`
+	Location     Location  `json:"location_value" bson:"location_value"`
+	CreateTime   time.Time `json:"create_time" bson:"create_time"`
 }
 
-type AssetIssue struct {
-	AssetID    string
-	Amount     int64
-	Issuer     string
-	CreateTime time.Time
-}
-
-type AssetSubtract struct {
-	AssetID    string
-	Amount     int64
-	Issuer     string
-	CreateTime time.Time
+type Location struct {
+	Latitude  float64 `json:"latitude" amino:"unsafe"`
+	Longitude float64 `json:"longitude" amino:"unsafe"`
 }

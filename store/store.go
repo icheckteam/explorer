@@ -14,6 +14,7 @@ type Store struct {
 	accountAssetC *mgo.Collection
 	assetIssueC   *mgo.Collection
 	assetSubtracC *mgo.Collection
+	propertyC     *mgo.Collection
 }
 
 // NewStore ...
@@ -27,5 +28,6 @@ func NewStore(db *mgo.Database) *Store {
 		accountAssetC: db.C("account_assets"),
 		assetIssueC:   db.C("asset_issues"),
 		assetSubtracC: db.C("asset_subtract"),
+		propertyC:     db.C("asset_property"),
 	}
 }
